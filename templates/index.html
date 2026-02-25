@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LemonWatch · Precision Growth Intelligence</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@300;400;500&family=Instrument+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+
+<!-- ── Loading screen ─────────────────────────────────────── -->
+<div id="loading-screen">
+  <div class="loading-logo">Station <span>El Guerdane</span></div>
+  <div class="loading-bar-track"><div class="loading-bar" id="loading-bar"></div></div>
+  <div class="loading-status" id="loading-status">Connecting to server…</div>
+</div>
+
+<div class="page">
+
+  <!-- ── Header ─────────────────────────────────────────── -->
+  <header class="header">
+    <div class="logo-group">
+      <div class="logo-eyebrow">Agricultural Research Field Station</div>
+      <div class="logo-title">Station <span>El Guerdane</span></div>
+      <div class="logo-sub">Orange Tree Growth Monitoring · Image-Based Analysis · Continuous Data Capture</div>
+    </div>
+    <div class="header-meta">
+      <div class="status-pill" id="status-pill">
+        <div class="status-dot"></div>
+        <span id="status-text">Live</span>
+      </div>
+      <div class="data-source-badge">Source: <strong id="data-source">—</strong></div>
+      <div class="header-date" id="current-date"></div>
+    </div>
+  </header>
+
+  <!-- ── Banners ────────────────────────────────────────── -->
+  <div id="error-banner"></div>
+  <div id="mock-banner">
+    ⚠ Demo mode — no data file found on server. Displaying synthetic mock data.
+    Place <code style="color:#6DCFA0">lemon_measurements.csv</code> in the
+    <code style="color:#6DCFA0">data/</code> folder and restart the server.
+  </div>
+
+  <!-- ── KPI strip ──────────────────────────────────────── -->
+  <div class="kpi-strip">
+    <div class="kpi-card">
+      <div class="kpi-label">Lemons Tracked Today</div>
+      <div class="kpi-value" id="kpi-count">—</div>
+      <div class="kpi-delta" id="kpi-count-d"></div>
+
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">Median Diameter</div>
+      <div class="kpi-value" id="kpi-diam">—<span class="unit">cm</span></div>
+      <div class="kpi-delta" id="kpi-diam-d"></div>
+
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">Days Monitored</div>
+      <div class="kpi-value" id="kpi-days">—</div>
+      <div class="kpi-delta" id="kpi-days-d"></div>
+
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">Avg Confidence</div>
+      <div class="kpi-value" id="kpi-conf">—<span class="unit">%</span></div>
+      <div class="kpi-delta" id="kpi-conf-d"></div>
+
+    </div>
+  </div>
+
+  <!-- ── Time filter controls ──────────────────────────── -->
+  <div class="time-controls-card">
+    <div id="time-controls"><!-- built by JS --></div>
+  </div>
+
+  <!-- ── Row 1: fleet trend + distribution ──────────────── -->
+  <div class="section-label">Growth Trends</div>
+  <div class="chart-grid wide">
+
+    <div class="chart-card">
+      <div class="chart-header">
+        <div>
+          <div class="chart-title">Median Diameter Over Time</div>
+          <div class="chart-subtitle">Fleet-wide · Daily aggregation · IQR band</div>
+        </div>
+        <div class="chart-badge">Chart 1</div>
+      </div>
+      <svg id="chart1" width="100%" height="240"></svg>
+      <div class="legend" id="legend1"></div>
+    </div>
+
+    <div class="chart-card">
+      <div class="chart-header">
+        <div>
+          <div class="chart-title">Diameter Distribution</div>
+          <div class="chart-subtitle" id="dist-label">Latest day · All lemons</div>
+        </div>
+        <div class="chart-badge mint">Chart 3</div>
+      </div>
+      <svg id="chart3" width="100%" height="240"></svg>
+    </div>
+
+  </div>
+
+  <!-- ── Row 2: individual + detections ─────────────────── -->
+  <div class="section-label">Individual Tracking &amp; Detection</div>
+
+  <div class="controls-bar">
+    <div class="control-group">
+      <div class="control-label">Lemon ID</div>
+      <select id="lemon-select"></select>
+    </div>
+  </div>
+
+  <div class="chart-grid">
+
+    <div class="chart-card">
+      <div class="chart-header">
+        <div>
+          <div class="chart-title">Individual Growth Curve</div>
+          <div class="chart-subtitle" id="ind-sub">Select a lemon ID above</div>
+        </div>
+        <div class="chart-badge gold">Chart 2</div>
+      </div>
+      <svg id="chart2" width="100%" height="240"></svg>
+    </div>
+
+    <div class="chart-card">
+      <div class="chart-header">
+        <div>
+          <div class="chart-title">Detections Per Day</div>
+          <div class="chart-subtitle">Unique lemon IDs · Confidence ≥ 0.70</div>
+        </div>
+        <div class="chart-badge gold">Chart 4</div>
+      </div>
+      <svg id="chart4" width="100%" height="240"></svg>
+    </div>
+
+  </div>
+
+  <!-- ── Comparison chart ──────────────────────────────── -->
+  <div class="section-label">Lemon Comparison</div>
+
+  <div class="chart-card" style="margin-bottom:1.5rem">
+    <div class="chart-header">
+      <div>
+        <div class="chart-title">Multi-Lemon Growth Overlay</div>
+        <div class="chart-subtitle">Select lemons to compare growth curves side by side</div>
+      </div>
+      <div class="chart-badge mint">Chart 5</div>
+    </div>
+    <div class="cmp-select-row">
+      <span class="tc-label">Select lemons</span>
+      <div id="cmp-select-wrap" class="cmp-select-wrap"><!-- built by JS --></div>
+    </div>
+    <svg id="chart5" width="100%" height="260"></svg>
+    <div class="legend" id="legend5"></div>
+  </div>
+
+  <!-- ── Anomaly detection panel ───────────────────────── -->
+  <div class="section-label">
+    Anomaly Detection
+    <span class="anomaly-badge" id="anomaly-count">0</span>
+  </div>
+
+  <div class="chart-card anomaly-card" style="margin-bottom:1.5rem">
+    <div class="chart-header">
+      <div>
+        <div class="chart-title">Detected Diameter Anomalies</div>
+        <div class="chart-subtitle">Sudden drops or spikes ≥ 1.5 cm vs prior day — possible detection errors or real events</div>
+      </div>
+      <div class="chart-badge" style="background:rgba(224,82,82,0.1);color:#E05252;border-color:rgba(224,82,82,0.2)">Auto</div>
+    </div>
+    <div id="anomaly-list" class="anomaly-list"><!-- built by JS --></div>
+  </div>
+
+  <!-- ── Footer ─────────────────────────────────────────── -->
+  <footer class="footer">
+    <div class="footer-note">
+      Confidence < 0.70 excluded · Diameters in cm · Daily median aggregation
+    </div>
+  
+    <div class="footer-note">
+      Source: Fixed camera · 30-min capture · Daily batch at 20:00
+    </div>
+  
+    <div class="footer-note">
+      Station El Guerdane · Citrus Field Plot · Experimental system
+    </div>
+  
+    <button class="refresh-btn" onclick="fetchAndRender()">↻ Refresh Data</button>
+    <button class="refresh-btn download-btn" onclick="downloadCSV()">⬇ Export CSV</button>
+  
+    <div class="footer-brand">
+      Station El Guerdane Dashboard · By OuYa01
+    </div>
+  </footer>
+
+</div>
+
+<!-- Tooltip -->
+<div id="tooltip"></div>
+
+<!-- JS loaded at end of body so DOM is ready -->
+<script src="/static/dashboard.js"></script>
+
+</body>
+</html>
